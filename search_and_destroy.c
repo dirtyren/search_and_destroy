@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 
 void search_and_destroy();
 int TOTAL_PROCESSES = 500;
@@ -40,16 +41,17 @@ void search_and_destroy()
     FILE *fp;
     char *filename;
     int total_lines = 0;
+    time_t start_time;
 
+    start_time = time(NULL);
     asprintf(&filename, "search_and_destroy_%ld.log",getpid());
     fp = fopen(filename, "w");
     while (total_lines < LINES) {
         total_lines++;
-        asprintf(&filename, "search_and_destroy_%ld.log\n",getpid());
         fputs(filename, fp);
-        free(filename);
-        filename = NULL;
     }
     fclose(fp);
+    unlink(filename);
+    printf("Process %ld finished = processed for %ld seconds\n", getpid(), (time(NULL) - start_time) );
     exit(0);
 }
